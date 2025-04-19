@@ -1,7 +1,6 @@
-
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Stars, Point, PointMaterial } from '@react-three/drei';
+import { Stars, Point, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface PlanetProps {
@@ -18,7 +17,6 @@ const Planet: React.FC<PlanetProps> = ({ position, size, color, rotationSpeed = 
   useFrame((state) => {
     if (ref.current) {
       ref.current.rotation.y += rotationSpeed;
-      // Add subtle floating motion
       ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
     }
   });
@@ -72,17 +70,18 @@ const AnimatedStars: React.FC = () => {
           size={1.5}
           sizeAttenuation={true}
           depthWrite={false}
-        />
-        {Array.from({ length: 2000 }).map((_, i) => (
-          <Point 
-            key={i} 
-            position={[
-              (Math.random() - 0.5) * 200,
-              (Math.random() - 0.5) * 200,
-              (Math.random() - 0.5) * 200
-            ]} 
-          />
-        ))}
+        >
+          {Array.from({ length: 2000 }).map((_, i) => (
+            <Point 
+              key={i} 
+              position={[
+                (Math.random() - 0.5) * 200,
+                (Math.random() - 0.5) * 200,
+                (Math.random() - 0.5) * 200
+              ]} 
+            />
+          ))}
+        </PointMaterial>
       </Points>
     </>
   );
@@ -101,7 +100,6 @@ const SpaceBackground: React.FC = () => {
         <Planet position={[5, 7, -12]} size={1.2} color="#FF6B6B" rotationSpeed={0.012} /> {/* Red planet */}
         <Planet position={[0, -8, -6]} size={0.7} color="#20B2AA" rotationSpeed={0.015} /> {/* Teal planet */}
         <Planet position={[12, 0, -15]} size={2.2} color="#FFC0CB" rotationSpeed={0.003} /> {/* Pink planet */}
-        {/* Add nebula-like glowing particles */}
         <fog attach="fog" color="#000" near={30} far={100} />
       </Canvas>
     </div>
