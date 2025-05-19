@@ -8,6 +8,9 @@ export interface Planet {
   imageUrl: string;
   description: string;
   upgradeMultiplier: number;
+  cost: number;
+  emoji: string;
+  miningPower: number;
 }
 
 export interface Mission {

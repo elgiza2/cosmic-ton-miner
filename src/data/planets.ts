@@ -11,6 +11,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/mercury.png",
     description: "The smallest and innermost planet in the Solar System.",
     upgradeMultiplier: 1.5,
+    cost: 0,
+    emoji: "🪐",
+    miningPower: 1
   },
   {
     id: 2,
@@ -21,6 +24,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/venus.png",
     description: "The second planet from the Sun, known for its thick atmosphere.",
     upgradeMultiplier: 1.7,
+    cost: 50,
+    emoji: "🪐",
+    miningPower: 2
   },
   {
     id: 3,
@@ -31,6 +37,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/earth.png",
     description: "Our home planet, the only known planet to support life.",
     upgradeMultiplier: 2,
+    cost: 100,
+    emoji: "🌎",
+    miningPower: 3
   },
   {
     id: 4,
@@ -41,6 +50,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/mars.png",
     description: "The Red Planet, known for its rusty appearance.",
     upgradeMultiplier: 2.2,
+    cost: 250,
+    emoji: "🔴",
+    miningPower: 4
   },
   {
     id: 5,
@@ -51,6 +63,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/jupiter.png",
     description: "The largest planet in our Solar System, a gas giant.",
     upgradeMultiplier: 2.5,
+    cost: 500,
+    emoji: "⚪",
+    miningPower: 8
   },
   {
     id: 6,
@@ -61,6 +76,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/saturn.png",
     description: "Known for its beautiful and prominent ring system.",
     upgradeMultiplier: 2.7,
+    cost: 1000,
+    emoji: "🪐",
+    miningPower: 10
   },
   {
     id: 7,
@@ -71,6 +89,9 @@ export const planets: Planet[] = [
     imageUrl: "/planets/uranus.png",
     description: "An ice giant with a tilted axis of rotation.",
     upgradeMultiplier: 3,
+    cost: 2500,
+    emoji: "🌌",
+    miningPower: 15
   },
   {
     id: 8,
@@ -81,5 +102,8 @@ export const planets: Planet[] = [
     imageUrl: "/planets/neptune.png",
     description: "The windiest planet in our Solar System.",
     upgradeMultiplier: 3.5,
+    cost: 5000,
+    emoji: "🌀",
+    miningPower: 20
   },
 ];
