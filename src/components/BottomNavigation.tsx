@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Home,
-  Planet,
+  Plane,
   Target,
   Users,
   Wallet
@@ -40,7 +40,7 @@ const BottomNavigation = () => {
                 : "text-gray-400 hover:text-white"
             }`}
           >
-            <Planet size={20} />
+            <Plane size={20} />
             <span className="text-xs mt-1">Planets</span>
           </Link>
           
