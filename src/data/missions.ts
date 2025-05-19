@@ -1,59 +1,45 @@
 
-export const missions = [
+import { Mission } from "../types";
+
+export const missions: Mission[] = [
   {
     id: 1,
-    title: "التسجيل اليومي",
-    description: "سجل دخولك يومياً للحصول على مكافأة",
+    title: "Daily Login",
+    description: "Login to the app daily to earn Space coins",
     reward: 10,
     isCompleted: false,
     type: "daily"
   },
   {
     id: 2,
-    title: "جمع أول تعدين",
-    description: "اجمع أول تعدين تحصل عليه من الكواكب",
-    reward: 5,
+    title: "Connect Wallet",
+    description: "Connect your TON wallet to the app",
+    reward: 50,
     isCompleted: false,
     type: "daily"
   },
   {
     id: 3,
-    title: "شراء كوكب جديد",
-    description: "قم بشراء كوكب جديد لزيادة معدل التعدين",
-    reward: 20,
+    title: "Deposit 1 TON",
+    description: "Deposit 1 TON to receive an airdrop bonus",
+    reward: 200,
     isCompleted: false,
-    type: "daily"
+    type: "deposit"
   },
   {
     id: 4,
-    title: "دعوة صديق",
-    description: "دعوة صديق للانضمام باستخدام رابط الإحالة الخاص بك",
-    reward: 50,
+    title: "Invite 3 Friends",
+    description: "Invite 3 friends to join using your referral link",
+    reward: 100,
     isCompleted: false,
     type: "referral"
   },
   {
     id: 5,
-    title: "ترقية كوكب",
-    description: "قم بترقية أحد الكواكب التي تملكها",
-    reward: 15,
+    title: "Upgrade a Planet",
+    description: "Upgrade any planet to earn a bonus",
+    reward: 75,
     isCompleted: false,
     type: "daily"
-  },
-  {
-    id: 6,
-    title: "ربط محفظة TON",
-    description: "قم بربط محفظة TON الخاصة بك",
-    reward: 25,
-    isCompleted: false,
-    type: "daily"
-  },
-  {
-    id: 7,
-    title: "إيداع TON",
-    description: "قم بإيداع 1 TON على الأقل للحصول على المكافأة",
-    reward: 100,
-    isCompleted: false,
-    type: "deposit"
   }
 ];

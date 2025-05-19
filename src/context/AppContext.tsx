@@ -61,31 +61,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Connect to Telegram WebApp
   useEffect(() => {
-    try {
-      if (WebApp.initDataUnsafe?.user) {
-        const user = WebApp.initDataUnsafe.user;
-        setState(prev => ({
-          ...prev,
-          tgUser: user as TelegramUser
-        }));
-      }
-    } catch (error) {
-      console.error("Error connecting to Telegram WebApp:", error);
+    if (WebApp.initDataUnsafe?.user) {
+      const user = WebApp.initDataUnsafe.user;
+      setState(prev => ({
+        ...prev,
+        tgUser: user as TelegramUser
+      }));
     }
     
     // Initialize from localStorage if available
-    try {
-      const savedUserData = localStorage.getItem('userData');
-      if (savedUserData) {
+    const savedUserData = localStorage.getItem('userData');
+    if (savedUserData) {
+      try {
         const userData = JSON.parse(savedUserData);
         setState(prev => ({
           ...prev,
           user: userData,
           isInitialized: true
         }));
+      } catch (e) {
+        console.error('Failed to parse saved user data');
       }
-    } catch (e) {
-      console.error('Failed to parse saved user data:', e);
     }
 
     setState(prev => ({
@@ -94,46 +90,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
     
     // TonConnect wallet listener
-    try {
-      tonConnectUI.onStatusChange(wallet => {
-        if (wallet) {
-          setState(prev => ({
-            ...prev,
-            isWalletConnected: true,
-            user: {
-              ...prev.user,
-              wallet: wallet.account.address,
-            }
-          }));
-        } else {
-          setState(prev => ({
-            ...prev,
-            isWalletConnected: false,
-            user: {
-              ...prev.user,
-              wallet: null,
-            }
-          }));
-        }
-      });
-    } catch (error) {
-      console.error("Error setting up TON Connect:", error);
-    }
+    tonConnectUI.onStatusChange(wallet => {
+      if (wallet) {
+        setState(prev => ({
+          ...prev,
+          isWalletConnected: true,
+          user: {
+            ...prev.user,
+            wallet: wallet.account.address,
+          }
+        }));
+      } else {
+        setState(prev => ({
+          ...prev,
+          isWalletConnected: false,
+          user: {
+            ...prev.user,
+            wallet: null,
+          }
+        }));
+      }
+    });
     
   }, []);
 
   // Save user data to localStorage when it changes
   useEffect(() => {
     if (state.isInitialized) {
-      try {
-        localStorage.setItem('userData', JSON.stringify(state.user));
-      } catch (error) {
-        console.error("Error saving to localStorage:", error);
-      }
+      localStorage.setItem('userData', JSON.stringify(state.user));
     }
   }, [state.user, state.isInitialized]);
   
-  // Calculate mining earnings every second instead of every 5 seconds for smoother experience
+  // Calculate mining earnings every 5 seconds
   useEffect(() => {
     const miningInterval = setInterval(() => {
       if (state.isInitialized) {
@@ -150,7 +138,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           }
         }));
       }
-    }, 1000);
+    }, 5000);
     
     return () => clearInterval(miningInterval);
   }, [state.user.miningRate, state.user.lastMiningTime, state.isInitialized]);
@@ -165,39 +153,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   
   const upgradePlanet = async (planetId: number, cost: number): Promise<boolean> => {
     try {
+      // Here you would implement the TON transaction logic
+      // For now, we'll simply check if the wallet is connected
       if (!state.isWalletConnected) {
-        // Allow upgrading even if wallet is not connected, for better user experience
-        if (state.user.balance < cost) {
-          return false;
-        }
-        
-        setState(prev => {
-          const updatedUser = {
-            ...prev.user,
-            balance: prev.user.balance - cost,
-            miningRate: prev.user.miningRate + 1, // Increase mining rate
-          };
-          
-          return {
-            ...prev,
-            user: updatedUser
-          };
-        });
-        
-        return true;
-      }
-      
-      // For wallet-connected users, implement TON transaction here
-      // For now, simulate successful transaction
-      
-      if (state.user.balance < cost) {
+        alert('Please connect your wallet first');
         return false;
       }
       
+      // Simulate successful upgrade
       setState(prev => {
         const updatedUser = {
           ...prev.user,
-          balance: prev.user.balance - cost,
           miningRate: prev.user.miningRate + 1, // Increase mining rate
         };
         
@@ -215,8 +181,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
   
   const collectMining = () => {
-    if (state.user.totalMined <= 0) return;
-    
     setState(prev => ({
       ...prev,
       user: {
