@@ -29,7 +29,7 @@ const Planet: React.FC<PlanetProps> = ({ position, size, color, rotationSpeed = 
 };
 
 const AnimatedStars: React.FC = () => {
-  const starsRef = useRef<THREE.Points>(null!);
+  const starsRef = useRef<THREE.Object3D>(null!);
   
   useFrame(({ clock }) => {
     if (starsRef.current) {
