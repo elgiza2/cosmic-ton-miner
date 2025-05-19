@@ -1,127 +1,95 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useAppContext } from '@/context/AppContext';
-import SpaceBackground from '@/components/SpaceBackground';
-import BottomNavigation from '@/components/BottomNavigation';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { planets } from '@/data/planets';
-import { formatNumber } from '@/utils/helpers';
-import { toast } from 'sonner';
+import React from "react";
+import BottomNavigation from "../components/BottomNavigation";
+import SpaceBackground from "../components/SpaceBackground";
+import { useAppContext } from "../context/AppContext";
+import { planets } from "../data/planets";
 
 const PlanetsPage = () => {
-  const { state, buyPlanet, upgradePlanet } = useAppContext();
-  const { user } = state;
-
-  const handleBuyPlanet = async (planetId: number, cost: number) => {
-    if (user.balance < cost) {
-      toast.error("Insufficient funds", {
-        description: "You don't have enough coins to buy this planet."
-      });
-      return;
-    }
-    
-    const success = await buyPlanet(planetId, cost);
-    if (success) {
-      toast.success("Planet purchased", {
-        description: `You now own a new planet that increases your mining rate!`
-      });
-    }
+  const { state, upgradePlanet, buyPlanet } = useAppContext();
+  
+  // Function to check if a planet is owned
+  const isPlanetOwned = (planetId: number) => {
+    return state.user.ownedPlanets.includes(planetId);
   };
   
-  const handleUpgradePlanet = async (planetId: number, cost: number) => {
-    if (user.balance < cost) {
-      toast.error("Insufficient funds", {
-        description: "You don't have enough coins to upgrade this planet."
-      });
-      return;
-    }
-    
-    const success = await upgradePlanet(planetId, cost);
-    if (success) {
-      toast.success("Planet upgraded", {
-        description: "Your planet has been upgraded and produces more coins!"
-      });
-    }
-  };
-
   return (
-    <div className="min-h-screen text-white pb-20">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <SpaceBackground />
       
-      <div className="container mx-auto px-4 pt-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 mb-2">
-            Cosmic Planets
-          </h1>
-          <p className="text-gray-300">Upgrade planets to increase mining power</p>
-        </motion.div>
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        <h1 className="text-4xl font-bold text-center mb-8">Planets</h1>
         
-        <div className="space-y-6">
-          {planets.map((planet) => {
-            const isOwned = user.ownedPlanets.includes(planet.id);
-            const canAfford = user.balance >= planet.cost;
-            
-            return (
-              <motion.div
-                key={planet.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: planet.id * 0.1 }}
-                className="bg-black/70 backdrop-blur-md rounded-xl border border-white/10 p-4 relative overflow-hidden"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="w-20 h-20 rounded-full bg-purple-900/50 flex items-center justify-center">
-                    <span className="text-3xl">{planet.emoji}</span>
+        <div className="max-w-md mx-auto mb-20">
+          {planets.map((planet) => (
+            <div 
+              key={planet.id} 
+              className={`mb-4 rounded-lg overflow-hidden border ${
+                isPlanetOwned(planet.id) 
+                  ? "border-purple-500" 
+                  : "border-gray-700"
+              }`}
+            >
+              <div className="flex items-center p-4 bg-gray-800/50 backdrop-blur-sm">
+                <div className="mr-4 text-2xl">{planet.emoji}</div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold">{planet.name}</h3>
+                  <p className="text-sm opacity-75">{planet.description}</p>
+                </div>
+                {isPlanetOwned(planet.id) && (
+                  <div className="px-2 py-1 bg-purple-600 rounded text-xs">
+                    Owned
                   </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-xl mb-1">{planet.name}</h3>
-                        <p className="text-sm text-gray-400">{planet.description}</p>
-                      </div>
-                      
-                      {isOwned && (
-                        <Badge variant="secondary" className="bg-purple-600 text-white">Owned</Badge>
-                      )}
+                )}
+              </div>
+              
+              <div className="p-4 bg-gray-900/50">
+                {isPlanetOwned(planet.id) ? (
+                  <>
+                    <div className="flex justify-between mb-2 text-sm">
+                      <span>Current Level:</span>
+                      <span>{planet.level}</span>
+                    </div>
+                    <div className="flex justify-between mb-2 text-sm">
+                      <span>Mining Power:</span>
+                      <span>{planet.miningPower} SC/min</span>
+                    </div>
+                    <div className="flex justify-between mb-4 text-sm">
+                      <span>Next Level Cost:</span>
+                      <span>{planet.upgradeCost.toFixed(2)} TON</span>
                     </div>
                     
-                    <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <div>
-                        <p className="text-sm text-gray-400">Mining Power</p>
-                        <p className="font-semibold">+{planet.miningPower}/min</p>
-                      </div>
-                      
-                      {isOwned ? (
-                        <Button
-                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                          onClick={() => handleUpgradePlanet(planet.id, planet.upgradeCost)}
-                          disabled={user.balance < planet.upgradeCost}
-                        >
-                          Upgrade ({formatNumber(planet.upgradeCost)})
-                        </Button>
-                      ) : (
-                        <Button
-                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                          onClick={() => handleBuyPlanet(planet.id, planet.cost)}
-                          disabled={!canAfford}
-                        >
-                          Buy ({formatNumber(planet.cost)})
-                        </Button>
-                      )}
+                    <button
+                      onClick={() => upgradePlanet(planet.id, planet.upgradeCost)}
+                      className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md font-medium transition-colors"
+                      disabled={!state.isWalletConnected}
+                    >
+                      Upgrade Planet
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between mb-2 text-sm">
+                      <span>Mining Power:</span>
+                      <span>{planet.miningPower} SC/min</span>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+                    <div className="flex justify-between mb-4 text-sm">
+                      <span>Purchase Cost:</span>
+                      <span>{planet.cost.toFixed(2)} SC</span>
+                    </div>
+                    
+                    <button
+                      onClick={() => buyPlanet(planet.id, planet.cost)}
+                      className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md font-medium transition-colors"
+                      disabled={!state.isWalletConnected || state.user.balance < planet.cost}
+                    >
+                      {state.user.balance < planet.cost ? "Insufficient Funds" : "Buy Planet"}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       

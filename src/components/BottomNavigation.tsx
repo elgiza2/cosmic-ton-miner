@@ -1,65 +1,85 @@
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Rocket, Users, Wallet, Target } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { 
+  Home,
+  Planet,
+  Target,
+  Users,
+  Wallet
+} from "lucide-react";
 
-const BottomNavigation: React.FC = () => {
+const BottomNavigation = () => {
   const location = useLocation();
-  const currentPath = location.pathname;
-
-  const navItems = [
-    {
-      name: 'Mine',
-      path: '/',
-      icon: <Home size={24} />,
-    },
-    {
-      name: 'Planets',
-      path: '/planets',
-      icon: <Rocket size={24} />,
-    },
-    {
-      name: 'Missions',
-      path: '/missions',
-      icon: <Target size={24} />,
-    },
-    {
-      name: 'Friends',
-      path: '/friends',
-      icon: <Users size={24} />,
-    },
-    {
-      name: 'Wallet',
-      path: '/wallet',
-      icon: <Wallet size={24} />,
-    },
-  ];
-
+  
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+  
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10">
-      <div className="flex justify-around items-center h-16">
-        {navItems.map((item) => (
+    <div className="fixed bottom-0 left-0 right-0 h-16 bg-gray-900/80 backdrop-blur-lg z-20">
+      <div className="container mx-auto h-full">
+        <div className="grid grid-cols-5 h-full">
           <Link
-            key={item.path}
-            to={item.path}
-            className={cn(
-              "flex flex-col items-center justify-center w-full h-full",
-              "text-xs transition-colors duration-200",
-              currentPath === item.path
-                ? "text-purple-500 font-semibold"
+            to="/"
+            className={`flex flex-col items-center justify-center ${
+              isActive("/") 
+                ? "text-purple-400" 
                 : "text-gray-400 hover:text-white"
-            )}
+            }`}
           >
-            {React.cloneElement(item.icon, { 
-              className: cn(
-                "mb-1",
-                currentPath === item.path ? "text-purple-500" : "text-gray-400"
-              )
-            })}
-            {item.name}
+            <Home size={20} />
+            <span className="text-xs mt-1">Home</span>
           </Link>
-        ))}
+          
+          <Link
+            to="/planets"
+            className={`flex flex-col items-center justify-center ${
+              isActive("/planets") 
+                ? "text-purple-400" 
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Planet size={20} />
+            <span className="text-xs mt-1">Planets</span>
+          </Link>
+          
+          <Link
+            to="/missions"
+            className={`flex flex-col items-center justify-center ${
+              isActive("/missions") 
+                ? "text-purple-400" 
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Target size={20} />
+            <span className="text-xs mt-1">Missions</span>
+          </Link>
+          
+          <Link
+            to="/friends"
+            className={`flex flex-col items-center justify-center ${
+              isActive("/friends") 
+                ? "text-purple-400" 
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Users size={20} />
+            <span className="text-xs mt-1">Friends</span>
+          </Link>
+          
+          <Link
+            to="/wallet"
+            className={`flex flex-col items-center justify-center ${
+              isActive("/wallet") 
+                ? "text-purple-400" 
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Wallet size={20} />
+            <span className="text-xs mt-1">Wallet</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

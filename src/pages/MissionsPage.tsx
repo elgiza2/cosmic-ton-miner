@@ -1,110 +1,141 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useAppContext } from '@/context/AppContext';
-import SpaceBackground from '@/components/SpaceBackground';
-import BottomNavigation from '@/components/BottomNavigation';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { missions } from '@/data/missions';
-import { formatNumber } from '@/utils/helpers';
-import { Check, Clock, Target } from 'lucide-react';
-import { toast } from 'sonner';
+import React from "react";
+import BottomNavigation from "../components/BottomNavigation";
+import SpaceBackground from "../components/SpaceBackground";
+import { useAppContext } from "../context/AppContext";
+import { missions } from "../data/missions";
 
 const MissionsPage = () => {
   const { state, completeMission } = useAppContext();
-  const { user } = state;
   
-  const handleCompleteMission = (missionId: number, reward: number) => {
-    completeMission(missionId);
-    toast.success("Mission Completed!", { 
-      description: `You earned ${formatNumber(reward)} coins!` 
-    });
+  // Check if a mission has been completed
+  const isMissionCompleted = (missionId: number) => {
+    return state.user.completedMissions.includes(missionId);
   };
-
+  
   return (
-    <div className="min-h-screen text-white pb-20">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <SpaceBackground />
       
-      <div className="container mx-auto px-4 pt-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 mb-2">
-            Space Missions
-          </h1>
-          <p className="text-gray-300">Complete missions to earn rewards</p>
-        </motion.div>
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        <h1 className="text-4xl font-bold text-center mb-8">Missions</h1>
         
-        <div className="space-y-6">
-          {missions.map((mission) => {
-            const isCompleted = user.completedMissions.includes(mission.id);
-            
-            return (
-              <motion.div
-                key={mission.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: mission.id * 0.1 }}
-                className={`bg-black/70 backdrop-blur-md rounded-xl border ${
-                  isCompleted ? 'border-green-500/30' : 'border-white/10'
-                } p-5 relative overflow-hidden`}
+        <div className="max-w-md mx-auto mb-20">
+          {/* Daily Missions */}
+          <h2 className="text-xl font-semibold mb-4">Daily Missions</h2>
+          {missions
+            .filter((mission) => mission.type === "daily")
+            .map((mission) => (
+              <div 
+                key={mission.id} 
+                className={`mb-4 rounded-lg overflow-hidden border ${
+                  isMissionCompleted(mission.id) 
+                    ? "border-green-500" 
+                    : "border-gray-700"
+                }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 rounded-full ${
-                      isCompleted ? 'bg-green-500/20' : 'bg-purple-900/50'
-                    } flex items-center justify-center`}>
-                      {isCompleted ? (
-                        <Check className="text-green-500" size={24} />
-                      ) : (
-                        <Target className="text-purple-400" size={24} />
-                      )}
-                    </div>
-                    
-                    <div>
-                      <div className="flex items-center">
-                        <h3 className="font-bold text-xl">{mission.title}</h3>
-                        <Badge 
-                          variant="secondary" 
-                          className={`ml-2 ${
-                            mission.type === 'daily' ? 'bg-blue-600' : 
-                            mission.type === 'deposit' ? 'bg-amber-600' : 'bg-purple-600'
-                          } text-white`}
-                        >
-                          {mission.type}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-400">{mission.description}</p>
-                    </div>
-                  </div>
+                <div className="p-4 bg-gray-800/50 backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">{mission.title}</h3>
+                  <p className="text-sm opacity-75 mb-3">{mission.description}</p>
                   
-                  <div className="text-right">
-                    <p className="text-sm text-gray-400">Reward</p>
-                    <p className="font-bold text-amber-400">{formatNumber(mission.reward)}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center">
+                      <span className="text-yellow-400 mr-1">+{mission.reward}</span>
+                      <span className="text-sm">SC</span>
+                    </span>
                     
-                    {isCompleted ? (
-                      <Badge className="mt-2 bg-green-600 text-white">Completed</Badge>
+                    {isMissionCompleted(mission.id) ? (
+                      <div className="px-3 py-1 bg-green-600 rounded text-sm">
+                        Completed
+                      </div>
                     ) : (
-                      <Button
-                        className="mt-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                        onClick={() => handleCompleteMission(mission.id, mission.reward)}
+                      <button
+                        onClick={() => completeMission(mission.id)}
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors"
                       >
-                        {mission.type === 'daily' ? (
-                          <><Clock size={16} className="mr-1" /> Complete</>
-                        ) : (
-                          'Complete'
-                        )}
-                      </Button>
+                        Complete
+                      </button>
                     )}
                   </div>
                 </div>
-              </motion.div>
-            );
-          })}
+              </div>
+            ))}
+            
+          {/* Deposit Missions */}
+          <h2 className="text-xl font-semibold mb-4 mt-8">Deposit Missions</h2>
+          {missions
+            .filter((mission) => mission.type === "deposit")
+            .map((mission) => (
+              <div 
+                key={mission.id} 
+                className={`mb-4 rounded-lg overflow-hidden border ${
+                  isMissionCompleted(mission.id) 
+                    ? "border-green-500" 
+                    : "border-gray-700"
+                }`}
+              >
+                <div className="p-4 bg-gray-800/50 backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">{mission.title}</h3>
+                  <p className="text-sm opacity-75 mb-3">{mission.description}</p>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center">
+                      <span className="text-yellow-400 mr-1">+{mission.reward}</span>
+                      <span className="text-sm">SC</span>
+                    </span>
+                    
+                    {isMissionCompleted(mission.id) ? (
+                      <div className="px-3 py-1 bg-green-600 rounded text-sm">
+                        Completed
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {}} // This would connect to deposit functionality
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm transition-colors"
+                        disabled={!state.isWalletConnected}
+                      >
+                        Deposit
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+          {/* Referral Missions */}
+          <h2 className="text-xl font-semibold mb-4 mt-8">Referral Missions</h2>
+          {missions
+            .filter((mission) => mission.type === "referral")
+            .map((mission) => (
+              <div 
+                key={mission.id} 
+                className={`mb-4 rounded-lg overflow-hidden border ${
+                  isMissionCompleted(mission.id) 
+                    ? "border-green-500" 
+                    : "border-gray-700"
+                }`}
+              >
+                <div className="p-4 bg-gray-800/50 backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">{mission.title}</h3>
+                  <p className="text-sm opacity-75 mb-3">{mission.description}</p>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center">
+                      <span className="text-yellow-400 mr-1">+{mission.reward}</span>
+                      <span className="text-sm">SC</span>
+                    </span>
+                    
+                    {isMissionCompleted(mission.id) ? (
+                      <div className="px-3 py-1 bg-green-600 rounded text-sm">
+                        Completed
+                      </div>
+                    ) : (
+                      <div className="text-sm opacity-75">In Progress</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
       

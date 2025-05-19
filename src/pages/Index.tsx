@@ -1,97 +1,59 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useAppContext } from '@/context/AppContext';
-import SpaceBackground from '@/components/SpaceBackground';
-import BottomNavigation from '@/components/BottomNavigation';
-import { formatLargeNumber, formatNumber } from '@/utils/helpers';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import BottomNavigation from "../components/BottomNavigation";
+import SpaceBackground from "../components/SpaceBackground";
+import { useAppContext } from "../context/AppContext";
 
 const Index = () => {
   const { state, collectMining } = useAppContext();
-  const { user } = state;
   
   return (
-    <div className="min-h-screen text-white pb-20">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
       <SpaceBackground />
       
-      <div className="container mx-auto px-4 pt-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 mb-2">
-            Cosmic TON Miner
-          </h1>
-          <p className="text-gray-300">Mine space coins by upgrading planets!</p>
-        </motion.div>
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        <h1 className="text-4xl font-bold text-center mb-8">Cosmic TON Miner</h1>
         
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-black/70 backdrop-blur-md rounded-xl border border-white/10 p-6 mb-6"
-        >
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <p className="text-gray-400 text-sm">Mining Rate</p>
-              <p className="text-2xl font-bold">{formatNumber(user.miningRate)}/min</p>
-            </div>
-            <div>
-              <p className="text-gray-400 text-sm">Balance</p>
-              <p className="text-2xl font-bold">{formatNumber(user.balance)}</p>
+        <div className="max-w-md mx-auto bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Mining Status</h2>
+            <div className="text-sm opacity-75">
+              Rate: {state.user.miningRate.toFixed(2)}/min
             </div>
           </div>
           
-          <div className="mb-6">
+          <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
             <div className="flex justify-between items-center mb-2">
-              <p className="text-gray-400 text-sm">Current Mining</p>
-              <p className="text-lg font-semibold">{formatNumber(user.totalMined)}</p>
+              <span>Total Mined:</span>
+              <span className="font-mono">{state.user.totalMined.toFixed(2)} SC</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-3 mb-4">
-              <div 
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full" 
-                style={{ width: `${Math.min(user.totalMined % 100, 100)}%` }}
-              />
-            </div>
-            <Button 
+            <button
               onClick={collectMining}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-              disabled={user.totalMined <= 0}
+              className="w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-md font-medium transition-colors"
             >
               Collect Mining Rewards
-            </Button>
+            </button>
           </div>
-        </motion.div>
+          
+          <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="flex justify-between items-center">
+              <span>Balance:</span>
+              <span className="font-mono">{state.user.balance.toFixed(2)} SC</span>
+            </div>
+          </div>
+        </div>
         
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-black/70 backdrop-blur-md rounded-xl border border-white/10 p-6 mb-8"
-        >
-          <h2 className="text-xl font-bold mb-4">Mining Statistics</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-800/50 p-4 rounded-lg">
-              <p className="text-gray-400 text-sm">Total Mined</p>
-              <p className="text-xl font-bold">{formatLargeNumber(user.balance + user.totalMined)}</p>
-            </div>
-            <div className="bg-gray-800/50 p-4 rounded-lg">
-              <p className="text-gray-400 text-sm">Owned Planets</p>
-              <p className="text-xl font-bold">{user.ownedPlanets.length}</p>
-            </div>
-            <div className="bg-gray-800/50 p-4 rounded-lg">
-              <p className="text-gray-400 text-sm">Completed Missions</p>
-              <p className="text-xl font-bold">{user.completedMissions.length}</p>
-            </div>
-            <div className="bg-gray-800/50 p-4 rounded-lg">
-              <p className="text-gray-400 text-sm">Referral Rewards</p>
-              <p className="text-xl font-bold">{formatNumber(user.referralRewards)}</p>
-            </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-20">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4">
+            <h3 className="text-sm opacity-75 mb-1">Owned Planets</h3>
+            <p className="text-xl font-semibold">{state.user.ownedPlanets.length}</p>
           </div>
-        </motion.div>
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-4">
+            <h3 className="text-sm opacity-75 mb-1">Completed Missions</h3>
+            <p className="text-xl font-semibold">{state.user.completedMissions.length}</p>
+          </div>
+        </div>
       </div>
       
       <BottomNavigation />
